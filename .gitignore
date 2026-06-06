@@ -1,7 +1,0 @@
-.idea
-.cache
-*.pyc
-build/
-dist/
-*.egg-info
-*.vscode
