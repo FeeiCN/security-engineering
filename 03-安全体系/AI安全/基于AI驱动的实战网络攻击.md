@@ -8,7 +8,7 @@ sidebar_badge:
 ---
 
 <iframe
-  src="/files/基于AI驱动的实战网络攻击-吴飞飞（Feei）v1.1-20251117.pdf"
+  src="/media/files/基于AI驱动的实战网络攻击-吴飞飞（Feei）v1.1-20251117.pdf"
   title="基于AI驱动的实战网络攻击 PDF"
   width="100%"
   height="720"
@@ -16,7 +16,7 @@ sidebar_badge:
 >
 </iframe>
 
-[打开 PDF](/files/基于AI驱动的实战网络攻击-吴飞飞（Feei）v1.1-20251117.pdf)
+[打开 PDF](/media/files/基于AI驱动的实战网络攻击-吴飞飞（Feei）v1.1-20251117.pdf)
 
 2025 年 11 月，上海·磐石行动，《基于 AI 驱动的实战网络攻击》主题演讲 PPT 和讲稿已经过数据输出审批。
 

@@ -91,9 +91,9 @@ Database: maindb
 
 ## 3 漏洞影响
 
-![](./v_paisang_01-1024x492.webp)
-![](./v_paisang_02-1024x489.webp)
-![](./v_paisang_03-1024x602.webp)
+![](/media/01-历史攻击事件/v_paisang_01-1024x492.webp)
+![](/media/01-历史攻击事件/v_paisang_02-1024x489.webp)
+![](/media/01-历史攻击事件/v_paisang_03-1024x602.webp)
 
 **共享凭据使所有后台同时可登录，这是供应链风险的直接体现。** 使用从 `maindb` 中提取的内置管理员凭据，可以登录所有子域的管理后台，涵盖 `testweb` 至 `testweb11` 共十余个实例，每个实例下托管了数百至近两千个客户网站。
 

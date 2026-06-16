@@ -15,7 +15,7 @@ sidebar_position: 26
 
 **GSM 短信的广播传输机制是嗅探攻击的根源——基站向覆盖范围内所有终端广播短信，由终端自行过滤非本机号码的内容，攻击者只需绕过终端的过滤逻辑即可截获所有短信。**
 
-![GSM工作流程](./sms_sniffer_gsm.gif)
+![GSM工作流程](/media/短信嗅探/sms_sniffer_gsm.gif)
 
 *GSM通信流程*
 
@@ -55,7 +55,7 @@ sidebar_position: 26
 
 ## 2.1 准备工作
 
-![短信嗅探手机](./sms_sniffer_phone2-765x1024.webp)
+![短信嗅探手机](/media/短信嗅探/sms_sniffer_phone2-765x1024.webp)
 
 *购买的测试设备：摩托罗拉C118*
 
@@ -93,7 +93,7 @@ make
 
 ## 2.3 短信嗅探
 
-![](./sms_sniffer_parts-1024x768.webp)
+![](/media/短信嗅探/sms_sniffer_parts-1024x768.webp)
 
 *将 USB2TTL 接到电脑，把耳机线一头接到手机，另外一头接到 USB2TTL 上。*
 
@@ -116,7 +116,7 @@ cd ~/osmocom-bb/src/host/layer23/src/misc/
 sudo wireshark -k -i lo -f 'port 4729'
 ```
 
-![嗅探测试结果](./sms_sniffer_result-1024x765.webp)
+![嗅探测试结果](/media/短信嗅探/sms_sniffer_result-1024x765.webp)
 
 *过滤只显示gsm_sms即可看到附近的短信嗅探结果*
 

@@ -11,7 +11,7 @@ sidebar_badge:
 
 在面对高等级威胁，且自身业务高度复杂且体量巨大时，需要重新审视现有的安全体系的有效性。充分考虑安全体系完备性，从理论和技术层面加强安全体系面对真实威胁防御效果，以避免关键单点风险失控导致整体崩溃。以原生安全范式（NbSP零越范式和OVTP可溯范式）为指导，基于安全平行切面为基础，构建可信纵深防御体系。在网络安全常规0day防御和数据安全敏感数据泄露这两个重要且困难的场景中的最新实践。
 
-![](./幻灯片1-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片1-1024x576.webp)
 
 大家早上好，我是止介，来自支付宝。非常荣幸应Leo之邀参加EISS（企业信息安全峰会），这是上海的一个非常棒的安全行业盛会。作为上海本地企业，很高兴能在这里与上海的同行共同探讨安全议题。
 
@@ -19,7 +19,7 @@ sidebar_badge:
 
 因此，今天我将毫无保留地分享支付宝在0day攻击防御和敏感数据保护方面的最新实践，以及我们基于原生安全范式构建的可信纵深防御体系的思考。
 
-![](./幻灯片3-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片3-1024x576.webp)
 
 本次分享将围绕三个核心部分展开：首先，我们将聚焦于对现有安全体系有效性的深入思考。其次，我们将探讨如何使用安全范式指导和优化安全体系的构建，确保其更加符合当前的安全需求。最后，我们将深入讨论在关键风险场景下的实践经验，分享我们在应对这些挑战时的策略和解决方案。通过这三个部分的讨论，我们希望能为安全领域带来新的见解和方法论。
 
@@ -29,7 +29,7 @@ sidebar_badge:
 
 首先，让我们思考一个问题：放下安全领域的专业背景，从一个局外人的视角来看，我们现有的安全体系的有效性究竟如何？
 
-![](./幻灯片5-1-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片5-1-1024x576.webp)
 
 **行业安全防护现状不容乐观。** 相信在座的许多人都经历过十年前的“乌云时代”，我们都目睹了无数白帽子轻松“漫游”各大企业内网，仿佛置身无人之境。时至今日，十年后的现状并未有太大改观。在各大企业的SRC中，我们依然可以看到不断出现的高危漏洞奖励，不少业余的白帽子通过挖掘漏洞仍能获得百万级收入。在HVV中，通用的0day漏洞和复杂的入侵手法导致许多企业被淘汰出局。除了这些可控风险外，我们还经常在公开或私下场合听闻各种APT事件，这些事件导致国内外企事业单位遭受数据泄漏和资金损失，例如最近的中国工商银行遭受Lockbit勒索软件攻击的事件。即使是那些未遭受过APT攻击的企业，如果组建了自己的安全红队进行红蓝对抗演练，结果往往也是以红队成功窃取数据或资金告终。
 
@@ -41,7 +41,7 @@ sidebar_badge:
 
 #### 到底有哪些因素影响网络安全有效性？
 
-![](./幻灯片6-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片6-1024x576.webp)
 
 产生漏洞风险的原因实在太多了，从防守视角看到底有哪些关键因素呢？
 
@@ -53,7 +53,7 @@ sidebar_badge:
 - **安全能力与运营有效性？** 当具备了对应安全风险的安全能力后，需要确保这个能力和策略的有效性以及是否覆盖到了所有需要防护的资产。是否能在资产变更上线前就默认覆盖安全能力，真实环境中各种非标情况是否能覆盖，面对真实威胁发生时各种能力是否还能持续保持有效？
 - …
 
-![](./幻灯片7-1-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片7-1-1024x576.webp)
 
 面对如此众多影响安全有效性的因素，再加上庞大且复杂的业务场景，影响全局安全性的潜在薄弱点数量急剧增加。同时，高价值数据和巨额资金的存在使我们面临各种等级和形式的威胁。
 
@@ -67,7 +67,7 @@ sidebar_badge:
 
 如何从方向上指导安全建设，如何在技术层面破局？
 
-![](./幻灯片9-1-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片9-1-1024x576.webp)
 
 蚂蚁集团在安全领域的大量创新探索基础上，提出了两条原生安全范式，以指导整体安全体系的建设。
 
@@ -81,7 +81,7 @@ sidebar_badge:
 
 #### 安全平行切面
 
-![](./幻灯片10-1-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片10-1-1024x576.webp)
 
 具体到实施层面，韦韬提出的“安全平行切面”概念已经为大家所熟知。我在这里简单阐述一下它的实际价值。
 
@@ -97,7 +97,7 @@ sidebar_badge:
 
 有了理论和技术支撑，很多问题变得更加明晰。我们可以从新的视角审视可信纵深防御体系，并更深入地探讨在0day漏洞防御和数据保护方面的具体实践。
 
-![](./幻灯片12-1-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片12-1-1024x576.webp)
 
 **虽然我们常说“不知攻焉知防”，但这并不意味着我们应该用攻击的方式来进行防守。** 攻击者只需发现一个漏洞即可成功，而防守方则需要全方位地防御各种潜在风险。在传统基于攻击特征的感知与拦截体系中，攻击者不断发掘新的利用方式，而防守方通常只能在事后补充新的发现和防御规则，这造成了攻防双方之间的巨大不对等。
 
@@ -109,7 +109,7 @@ sidebar_badge:
 
 #### 0day防御
 
-![](./幻灯片13-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片13-1024x576.webp)
 
 在0day防御的实践中，我们利用了基于业务应用和操作系统层面的切面能力，建立在此基础上的数据采集能力和管控能力。我们通过分析并定义应用的参数、调用链以及函数调用等正常行为，进而建立了一套可信策略。这种做法使我们能够准确地识别和区分正常行为与潜在的异常或恶意行为，从而有效防御0day攻击。
 
@@ -117,7 +117,7 @@ sidebar_badge:
 
 #### 水平越权防护到敏感数据防护
 
-![](./幻灯片14-1-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片14-1-1024x576.webp)
 
 我们通过提升水平越权识别的准确性，并结合各种安全治理措施，已经将核心业务的水平越权漏洞数量降至极低水平。然而，仅仅依赖发现和治理手段并不能完全杜绝水平越权问题，一旦出现此类漏洞，其影响仍然较大。
 
@@ -127,7 +127,7 @@ sidebar_badge:
 
 按照这套思路，我们不仅能解决互联网侧的水平越权风险，还能解决办公网侧基于角色的权限体系问题，本质上所有内部员工查询用户的敏感数据，一定是基于用户的授权行为（比如有用户咨询反馈过问题），这类本质上只是入口应用采集身份和数据应用校验授权逻辑的差异，整套方案同样适用。等到进一步完善后，我们计划公开所有细节的实现方法。
 
-![](./幻灯片15-1024x576.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/幻灯片15-1024x576.webp)
 
 由于时间限制，我无法深入讲解所有细节。如果大家对更多内容感兴趣，欢迎访问《[基于原生安全范式构建可信纵深防御体系](https://feei.cn/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/)》获取更多信息。如果有任何疑问，也可以通过添加我的微信（FEEI_WU）与我交流探讨。
 
@@ -141,7 +141,7 @@ sidebar_badge:
 
 Download
 
-![](./EISS2023议程-scaled.webp)
-![](./EISS2023-支付宝议题-scaled.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/EISS2023议程-scaled.webp)
+![](/media/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/EISS2023-支付宝议题-scaled.webp)
 
 *EISS-2023会议议程*

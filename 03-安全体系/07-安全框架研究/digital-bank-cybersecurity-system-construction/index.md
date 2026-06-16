@@ -14,10 +14,10 @@ icon: book-open-text
 
 可通过各大电商平台购买。
 
-![](./宣传海报-576x1024.webp)
-![](./图片-2-1024x527.webp)
-![](./图片-3-1024x457.webp)
-![](./图片-4-1024x502.webp)
-![](./图片-5-1024x292.webp)
-![](./图片-6-1024x507.webp)
-![](./图片-7-1024x1001.webp)
+![](/media/digital-bank-cybersecurity-system-construction/宣传海报-576x1024.webp)
+![](/media/digital-bank-cybersecurity-system-construction/图片-2-1024x527.webp)
+![](/media/digital-bank-cybersecurity-system-construction/图片-3-1024x457.webp)
+![](/media/digital-bank-cybersecurity-system-construction/图片-4-1024x502.webp)
+![](/media/digital-bank-cybersecurity-system-construction/图片-5-1024x292.webp)
+![](/media/digital-bank-cybersecurity-system-construction/图片-6-1024x507.webp)
+![](/media/digital-bank-cybersecurity-system-construction/图片-7-1024x1001.webp)

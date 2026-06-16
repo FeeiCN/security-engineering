@@ -13,11 +13,11 @@ sidebar_position: 25
 
 **相同功能在不同入口或不同阶段的实现逻辑若不一致，攻击者可通过绕过严格入口直接调用宽松入口来获取本不应拥有的权限。**
 
-![](./image-1-1024x795.webp)
+![](/media/GitHub-PR逻辑风险/image-1-1024x795.webp)
 
 正常情况下，我们在GitHub给某个开源项目A提交一个Pull Request时，会有一个“Allow edits by maintainers”的选项且默认选中。这个选项的主要作用是让项目A（Base Repository）的维护者可以有权限修改被我Fork后的项目（Head Repository）分支。
 
-![](./image-2-1024x593.webp)
+![](/media/GitHub-PR逻辑风险/image-2-1024x593.webp)
 
 另外可以发现，无需拥有项目Base Repository或Head Repository权限即可随意创建Pull Request，限制了Head Repository必须是fork自Base Repository。
 

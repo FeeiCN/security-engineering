@@ -11,7 +11,7 @@ sidebar_position: 30
 
 SIM（Subscriber Identity Module）直译是用户身份模块，本质是一个智能卡，用来让基站识别你是谁。eSIM本质上是将原本 SIM卡的硬件集成进了手机中，并没有不同。
 
-![](./image-11.webp)
+![](/media/手机SIM卡复制/image-11.webp)
 
 SIM卡一般由六个触点：电源（C1-VCC）、复位（C2-RST）、时钟（C3-CLK）、接地端（C5-GND）、编程电压（C6-VPP）、双向半双工UART（C7-I/O）。SIM卡中会有微处理器CPU，ROM，RAM，EPROM。SIM卡一般由六个触点：电源（C1-VCC）、复位（RESET）、时钟（CLK）、接地端（GND）、编程电压（VPP）、I/O接口（Data）。
 
@@ -41,7 +41,7 @@ SIM里储存的信息
 
 2G（GSM）入网的身份认证流程比较简单，在手机和基站分别通过各自相同的密钥使用 Comp128 哈希算法进行比对来确认身份。
 
-![](./image-17.webp)
+![](/media/手机SIM卡复制/image-17.webp)
 
 1. 连接网络时，手机向基站发送 TSMI 来证明其身份。
   - 在首次连接到新网络时，手机会发送 IMSI 来标识自己，基站会向手机发送新的 TMSI，TMSI 会经常变动。
@@ -55,11 +55,11 @@ SIM里储存的信息
 
 #### COMP128 算法细节
 
-![](./image-14.webp)
+![](/media/手机SIM卡复制/image-14.webp)
 
 *函数 comp128，入参为 128位 K 和 128 位 RAND，*
 
-![](./image-16.webp)
+![](/media/手机SIM卡复制/image-16.webp)
 
 *Comp128 核心就是混淆，让原始数据和密钥融合，打乱所有位置。*
 
@@ -83,11 +83,11 @@ SIM里储存的信息
 
 #### Milenage 算法细节
 
-![](./image-12.webp)
+![](/media/手机SIM卡复制/image-12.webp)
 
 *函数f1，入参需要 RAND、AMF、SQN、Ki，核心算法使用 AES-128，输出 MAC-A*
 
-![](./image-13.webp)
+![](/media/手机SIM卡复制/image-13.webp)
 
 *函数 f2/3/4/5 使用 OPc、Ki、RAND 生成 XRES、CK、IK、AK*
 

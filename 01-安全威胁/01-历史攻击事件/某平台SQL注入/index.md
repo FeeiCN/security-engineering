@@ -116,14 +116,14 @@ Database: mos_gsms2_1
 
 ## 3 漏洞影响
 
-![](./v_xuanwu_01-1024x555.webp)
-![](./v_xuanwu_02-1024x598.webp)
-![](./v_xuanwu_03-1024x598.webp)
-![](./v_xuanwu_04-1024x570.webp)
-![](./v_xuanwu_05-1024x592.webp)
-![](./v_xuanwu_06-1024x592.webp)
-![](./v_xuanwu_07-1024x592.webp)
-![](./v_xuanwu_08-576x1024.webp)
+![](/media/某平台SQL注入/v_xuanwu_01-1024x555.webp)
+![](/media/某平台SQL注入/v_xuanwu_02-1024x598.webp)
+![](/media/某平台SQL注入/v_xuanwu_03-1024x598.webp)
+![](/media/某平台SQL注入/v_xuanwu_04-1024x570.webp)
+![](/media/某平台SQL注入/v_xuanwu_05-1024x592.webp)
+![](/media/某平台SQL注入/v_xuanwu_06-1024x592.webp)
+![](/media/某平台SQL注入/v_xuanwu_07-1024x592.webp)
+![](/media/某平台SQL注入/v_xuanwu_08-576x1024.webp)
 
 **该平台所有产品数据库均已暴露，短信库中的企业用户数量可达数万家。** 这意味着攻击者不只获取了用户数据，还取得了每个企业客户的短信发送权限——可以以这些企业的名义向其终端用户发送任意内容。
 

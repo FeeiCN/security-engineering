@@ -9,15 +9,15 @@ title: 某站点GET SHELL
 
 **公开的 Git 泄露可以直接暴露私有代码仓库的访问凭据。** 通过浏览器插件检测发现目标站点存在 Git 信息泄露。
 
-![](./v_baixing_01-1024x618.webp)
+![](/media/01-历史攻击事件/v_baixing_01-1024x618.webp)
 
 Edge 插件检测（左下角提示）到百姓金融存在 Git 泄漏。
 
-![](./v_baixing_02.webp)
+![](/media/01-历史攻击事件/v_baixing_02.webp)
 
 **泄露的 git 信息指向了一个部署在 GitHub Private 的项目，且携带了 auth-token。**
 
-![](./v_baixing_03.webp)
+![](/media/01-历史攻击事件/v_baixing_03.webp)
 
 携带 auth-token 的仓库地址意味着可以直接以该 token 为授权码克隆代码，无需任何额外的身份验证。
 
@@ -29,12 +29,12 @@ Edge 插件检测（左下角提示）到百姓金融存在 Git 泄漏。
 
 代码审计后未发现硬编码密码等直接可利用的内容，但发现了 `pull.php`。通过 auth-token 将 webshell 直接 commit 到代码仓库，然后访问 `pull.php` 触发服务器拉取最新代码，即可 GetShell。
 
-![](./v_baixing_03.webp)
-![](./v_baixing_05-1024x561.webp)
+![](/media/01-历史攻击事件/v_baixing_03.webp)
+![](/media/01-历史攻击事件/v_baixing_05-1024x561.webp)
 
 DB 账号信息
 
-![](./v_baixing_06-1024x561.webp)
+![](/media/01-历史攻击事件/v_baixing_06-1024x561.webp)
 
 DB 数据
 
@@ -46,11 +46,11 @@ DB 数据
 
 通过该地址直接上传 webshell 并 commit，再通过 `http://cartier.****.cn/pull.php` 触发部署，即可在另一个域名下同样完成 GetShell。
 
-![](./v_baixing_07-1024x619.webp)
+![](/media/01-历史攻击事件/v_baixing_07-1024x619.webp)
 
 SHELL 地址：`http://cartier.****.cn/js/faq.php`
 
-![](./v_baixing_08.webp)
+![](/media/01-历史攻击事件/v_baixing_08.webp)
 
 **Git 泄露的防治需要从两个层面入手。** 第一层是防止 `.git` 目录被 Web 服务器直接访问，可通过 Nginx 或 Apache 配置屏蔽该路径。第二层是防止 auth-token 出现在任何公开或可能泄露的位置，包括 HTTP 响应头、页面源码、配置文件和 Git 历史记录。对于 `pull.php` 这类部署脚本，至少应当添加 IP 白名单或 token 验证，避免任何能访问 URL 的人都能触发代码更新。
 

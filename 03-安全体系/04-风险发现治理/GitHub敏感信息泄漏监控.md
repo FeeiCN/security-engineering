@@ -8,7 +8,7 @@ sidebar_badge:
 ---
 
 <iframe
-  src="/files/GitHub敏感信息泄漏监控.pdf"
+  src="/media/files/GitHub敏感信息泄漏监控.pdf"
   title="GitHub敏感信息泄漏监控 PDF"
   width="100%"
   height="640"
@@ -17,7 +17,7 @@ sidebar_badge:
 </iframe>
 
 <div style={{margin: '12px 0 24px'}}>
-  <a className="button button--primary" href="/files/GitHub敏感信息泄漏监控.pdf" target="_blank" rel="noopener noreferrer">
+  <a className="button button--primary" href="/media/files/GitHub敏感信息泄漏监控.pdf" target="_blank" rel="noopener noreferrer">
     打开 / 下载 PDF
   </a>
 </div>

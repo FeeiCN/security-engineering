@@ -8,7 +8,7 @@ sidebar_badge:
 ---
 
 <iframe
-  src="/files/员工侧安全一站式解决方案最佳实践.pdf"
+  src="/media/files/员工侧安全一站式解决方案最佳实践.pdf"
   title="一种干掉所有密码的安全实践 PDF"
   width="100%"
   height="640"
@@ -17,7 +17,7 @@ sidebar_badge:
 </iframe>
 
 <div style={{margin: '12px 0 24px'}}>
-  <a className="button button--primary" href="/files/员工侧安全一站式解决方案最佳实践.pdf" target="_blank" rel="noopener noreferrer">
+  <a className="button button--primary" href="/media/files/员工侧安全一站式解决方案最佳实践.pdf" target="_blank" rel="noopener noreferrer">
     打开 / 下载 PDF
   </a>
 </div>
@@ -92,7 +92,7 @@ sidebar_badge:
 
 ### VPN 认证方案
 
-![VPN 认证方案](./gugu_vpn_auth.webp)
+![VPN 认证方案](/media/员工侧安全一站式解决方案/gugu_vpn_auth.webp)
 
 将计算出的最终结果当作密码去连接 VPN。VPN 验证服务发现密码中有四处 `gu`/`ug` 分隔符、且长度为 89 位时，就走 GuGu SID 验证逻辑。
 
@@ -110,7 +110,7 @@ result = original + ug + sha1(original)[:5]
 
 ### 入网架构
 
-![入网架构](./gugu_network_architecture.webp)
+![入网架构](/media/员工侧安全一站式解决方案/gugu_network_architecture.webp)
 
 ## 一键免密
 
@@ -118,7 +118,7 @@ GuGu 登录过程中集成了多重安全策略，保证账号安全。其他软
 
 ### Web 端免密
 
-![Web 端免密方案](./gugu_password-free01.webp)
+![Web 端免密方案](/media/员工侧安全一站式解决方案/gugu_password-free01.webp)
 
 GuGu 启动时拉起本地 HTTP Server：
 
@@ -142,12 +142,12 @@ GuGu 启动时拉起本地 HTTP Server：
 
 ### App 端免密
 
-![App 端免密方案一](./gugu_free-password-for-mobile01.webp)
-![App 端免密方案二](./gugu_free-password-for-mobile02.webp)
+![App 端免密方案一](/media/员工侧安全一站式解决方案/gugu_free-password-for-mobile01.webp)
+![App 端免密方案二](/media/员工侧安全一站式解决方案/gugu_free-password-for-mobile02.webp)
 
 ### 三方系统免密
 
-![三方系统免密方案](./gugu_third-party_authentication.webp)
+![三方系统免密方案](/media/员工侧安全一站式解决方案/gugu_third-party_authentication.webp)
 
 ## 终端安全
 
@@ -218,7 +218,7 @@ public static String generateSign(Map<String, Object> param) {
 
 ### Token 交互流程
 
-![Token 交互流程](./gugu_token.webp)
+![Token 交互流程](/media/员工侧安全一站式解决方案/gugu_token.webp)
 
 ## 项目成型
 
@@ -233,6 +233,6 @@ public static String generateSign(Map<String, Object> param) {
 - 离开座位锁屏：自动锁屏；
 - 新型高危软件漏洞应急响应：软件版本情报信息收集。
 
-![GuGu 项目组](./IMG_3455.webp)
+![GuGu 项目组](/media/员工侧安全一站式解决方案/IMG_3455.webp)
 
 *GuGu 项目组*

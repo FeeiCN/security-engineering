@@ -11,11 +11,11 @@ title: 某社交平台SSRF到GET SHELL
 
 **参数中携带 URL 是 SSRF 的经典信号。** 在支付回调接口 `http://zhifu.game.weibo.com/topay.php` 的 `payaction` 参数中发现了 URL 类型的值。后端在处理这类参数时，若会主动向该 URL 发起请求，就构成了服务端请求伪造的条件。通过将参数值替换为自控服务器地址并观察访问日志，即可验证漏洞是否存在。
 
-![](./v_weibo_01-1024x479.webp)
+![](/media/01-历史攻击事件/v_weibo_01-1024x479.webp)
 
 **回放请求后服务器收到了来自目标的访问，SSRF 得以确认。**
 
-![](./v_weibo_02.webp)
+![](/media/01-历史攻击事件/v_weibo_02.webp)
 
 那就开始利用吧！
 
@@ -23,16 +23,16 @@ title: 某社交平台SSRF到GET SHELL
 
 **`file://` 协议支持使 SSRF 直接变成任意文件读取。** 将 `payaction` 参数值替换为 `file:///etc/crontab`，服务端在发起请求时会直接读取本地文件并将内容返回。通过一个辅助重定向脚本，将 HTTP 请求跳转到任意协议地址，可以绕过部分协议限制，进一步扩展可读取的文件范围。
 
-![](./v_weibo_03-1024x564.webp)
-![](./v_weibo_04-1024x779.webp)
+![](/media/01-历史攻击事件/v_weibo_03-1024x564.webp)
+![](/media/01-历史攻击事件/v_weibo_04-1024x779.webp)
 
 **`/etc/crontab` 是获取服务器目录结构的快捷入口。** 定时任务文件中记录了大量脚本的完整路径，借助这些路径可以进一步读取业务代码、配置文件和密钥：
 
-![](./v_weibo_05-1024x845.webp)
+![](/media/01-历史攻击事件/v_weibo_05-1024x845.webp)
 
 读取`/etc/passwd`文件：
 
-![img](./v_weibo_06.webp)
+![img](/media/01-历史攻击事件/v_weibo_06.webp)
 
 **负载均衡的存在将单点漏洞扩展到整个服务器集群。** 从 Response header 可以发现 `zhifu.game.weibo.com` 背后做了负载均衡，意味着这一任意文件读取漏洞影响的是后端所有实例，而非单台服务器。截至目前已达到集群级别的任意文件读取。
 
@@ -44,11 +44,11 @@ title: 某社交平台SSRF到GET SHELL
 
 `/data1/www/htdocs/game.weibo.com/`
 
-![](./v_weibo_07-1024x223.webp)
+![](/media/01-历史攻击事件/v_weibo_07-1024x223.webp)
 
 **验证路径可读后，即可读取代码配置和密钥。**
 
-![img](./v_weibo_08.webp)
+![img](/media/01-历史攻击事件/v_weibo_08.webp)
 
 至此已经可以读取到代码配置、密钥等敏感信息，并可以拿这些信息进一步利用了。
 

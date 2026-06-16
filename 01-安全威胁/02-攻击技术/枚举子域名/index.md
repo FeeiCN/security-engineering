@@ -26,7 +26,7 @@ sidebar_position: 27
 - Bing:`https://www.bing.com/search?q=site:feei.cn`
 - Yahoo:`https://search.yahoo.com/search?p=site:feei.cn`
 
-![搜索引擎查询子域名](./esd_01.webp)
+![搜索引擎查询子域名](/media/枚举子域名/esd_01.webp)
 
 缺点：接口性质的子域名不会被搜索引擎收录，存在遗漏
 
@@ -36,7 +36,7 @@ sidebar_position: 27
 
 Google透明度报告中的[证书透明度项目](https://transparencyreport.google.com/https/certificates)是用来解决HTTPS证书系统的结构性缺陷，它能够让所有人查询各个网站的HTTPS证书信息，从而能发现签发了证书的子域名。[`feei.cn`的证书透明度结果](https://transparencyreport.google.com/https/certificates?cert_search_auth=&cert_search_cert=&cert_search=include_expired:true;include_subdomains:true;domain:feei.cn&lu=cert_search)
 
-![Google证书透明度查询子域名](./esd_02.webp)
+![Google证书透明度查询子域名](/media/枚举子域名/esd_02.webp)
 
 #### HTTPS证书内置支持的域名和子域名
 
@@ -138,7 +138,7 @@ if __name__ == '__main__':
 - crossdomain.xml：`http://www.feei.cn/crossdomain.xml`
 - DNSPod：`http://www.dnspod.cn/proxy_diagnose/recordscan/feei.cn?callback=feei`
 
-![GitHub查询子域名](./esd_03.webp)
+![GitHub查询子域名](/media/枚举子域名/esd_03.webp)
 
 缺点：不全面，存在遗漏
 

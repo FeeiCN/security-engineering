@@ -7,7 +7,7 @@ sidebar_position: 24
 
 正则基础知识
 
-![](./image.webp)
+![](/media/正则安全/image.webp)
 
 <!-- truncate -->
 
