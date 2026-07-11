@@ -152,8 +152,8 @@ sidebar_position: 0
     - [重写规则](./03-安全体系/07-安全框架研究/重写规则.md)
     - [building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm](./03-安全体系/07-安全框架研究/building-a-trusted-in-depth-defense-system-based-on-native-security-paradigm/index.md)
     - [digital-bank-cybersecurity-system-construction](./03-安全体系/07-安全框架研究/digital-bank-cybersecurity-system-construction/index.md)
-  - [AI安全](./03-安全体系/AI安全/AI安全.md)
-    - [基于AI驱动的实战网络攻击](./03-安全体系/AI安全/基于AI驱动的实战网络攻击.md)
+  - [AI安全](../04-AI安全/AI安全.md)
+    - [基于AI驱动的实战网络攻击](../04-AI安全/基于AI驱动的实战网络攻击.md)
 
 ---
 
