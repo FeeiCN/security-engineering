@@ -30,6 +30,14 @@ last_reviewed: '2026-07-11'
 
 [AgentDojo](https://arxiv.org/abs/2406.13352)专门评估工具返回的不可信数据如何劫持 Agent。论文中的环境包含邮件、网银和旅行预订等 97 个正常任务及 629 个安全测试用例，并观察到现有模型在没有攻击时也会失败于部分任务。安全设计需要同时覆盖恶意注入、模型普通失误和工具异常，不能把所有危险请求都归因于攻击者。
 
+## 编码 Agent 先守住工作区边界
+
+[NCC Group 2026 年的编码 Agent 安全白皮书](https://www.nccgroup.com/research/an-introduction-to-ai-coding-agent-security/)把权限模型和操作系统沙箱视为两道独立控制。权限模型决定何时需要批准，沙箱决定一个已运行进程在文件、网络和系统资源上实际能触达什么。不同产品、CLI/桌面形态、操作系统和配置的默认值并不一致，看到“有沙箱”或“会弹确认”都不足以推断完整安全边界。
+
+编码场景还要区分两类工作区。未信任工作区在用户确认前就可能通过配置加载、可执行文件搜索路径、插件或 MCP 配置触发代码；已信任工作区则可能通过 README、源码、Issue、终端输出或网页内容注入指令，再寻找沙箱逃逸、权限提示绕过、敏感文件覆盖和网络外传路径。`.git/hooks`、Agent 配置、工作区配置、Shell 启动文件和 MCP 注册信息都属于高敏感对象，写入它们的权限应独立于普通源码编辑。
+
+模型拒答和 API 护栏不能充当执行边界。白皮书明确把 Harness 视为阻止危险工具调用的最终强制点；攻击者可以把恶意动作伪装成正常构建步骤，也可能利用护栏制造拒答。[Shai-Hulud 样本的公开分析](https://mp.weixin.qq.com/s/AbVCdK35qAjUgIxQ6-2vHg)展示了后一种情况：恶意包在代码前放置会触发安全拒答的文本，试图让 AI 扫描器在分析混淆代码前停止。扫描系统必须把拒答、超时和空响应记为“未完成分析”，继续使用静态规则、沙箱或人工复核；任何非结论都不能自动转换成安全结论。
+
 ## Capability Envelope 限定一次运行的最大权限
 
 `Capability Envelope` 在运行开始前由宿主根据登录用户、业务场景和已有批准生成。它至少描述委托主体与租户、允许的工具和动作、资源选择器、允许读取的数据级别、允许输出的目的地、费用与步骤预算、有效期、子 Agent 委托深度，以及哪些动作仍需独立批准。
@@ -75,6 +83,8 @@ last_reviewed: '2026-07-11'
 ```
 
 模型只产生 `Action Proposal`，其中的工具名和参数仍是不可信候选。Proposal Normalizer 先规范化类型、解析资源身份和计算参数摘要，再交给 PDP。PDP 使用当前 Capability Envelope、业务状态、风险级别和审批记录作决定；放行后，Envelope Builder 把规范化参数与 `decision_ref` 固化为 Action Envelope。Tool Gateway PEP 执行决定，校验通过后 Credential Broker 才为目标资源取得短期凭证。
+
+[一份 Agent 零信任架构实践](https://mp.weixin.qq.com/s/wJSCFQkL67mT7W76GOmGtw)使用容器隔离、身份认证、权限控制、Vault 和审计降低执行风险。这些组件是必要基础，仍需把强制点放到真实资源旁边：容器限制进程无法阻止一个合法 ERP Token 创建错误订单，Vault 防止密钥明文暴露也无法判断当前用户是否批准了这组参数。PDP、Tool Gateway PEP 和业务资源 PEP 的分层，正是为了让运行隔离、凭证保护和对象级授权各自承担清晰职责。
 
 凭证应限制接收方和用途。[RFC 8707](https://www.rfc-editor.org/rfc/rfc8707)定义了 OAuth `resource` 参数，使授权服务器可以签发面向特定资源的 audience-restricted Token；规范也说明多 Audience 会扩大资源之间的信任。模型上下文无需接触 Token，MCP Server 也不应把收到的 Token 当成可转发给任意下游的通行证。
 
