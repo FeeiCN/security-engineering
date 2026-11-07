@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="300" viewBox="0 0 320 300" role="img" aria-labelledby="title desc">
+<title id="title">训练与验证损失示意</title>
+<desc id="desc">训练损失从 5.0 降至 3.0 再降至 1.0；验证损失从 5.1 降至 3.2 后升至 3.8。所有数值都是教学示意。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#555"/></marker></defs>
+<rect width="320" height="300" rx="12" fill="#fff"/>
+<g font-family="system-ui, -apple-system, sans-serif">
+<text x="160" y="24" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">实线 ● 训练　虚线 ■ 验证</text>
+<path d="M42 214 H298" stroke="#ddd"/>
+<text x="32" y="218" font-size="12" text-anchor="end" font-weight="normal" fill="#242424">1</text>
+<path d="M42 150 H298" stroke="#ddd"/>
+<text x="32" y="154" font-size="12" text-anchor="end" font-weight="normal" fill="#242424">3</text>
+<path d="M42 86 H298" stroke="#ddd"/>
+<text x="32" y="90" font-size="12" text-anchor="end" font-weight="normal" fill="#242424">5</text>
+<path d="M42 55 V251 H298" fill="none" stroke="#555"/>
+<polyline points="52,86 169,150 286,214" fill="none" stroke="#333" stroke-width="2"/>
+<circle cx="52" cy="86" r="4" fill="#333"/>
+<circle cx="169" cy="150" r="4" fill="#333"/>
+<circle cx="286" cy="214" r="4" fill="#333"/>
+<polyline points="52,82.80000000000001 169,143.6 286,124.4" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="48" y="78.80000000000001" width="8" height="8" fill="#333"/>
+<rect x="165" y="139.6" width="8" height="8" fill="#333"/>
+<rect x="282" y="120.4" width="8" height="8" fill="#333"/>
+<text x="160" y="50" font-size="13" text-anchor="middle" font-weight="600" fill="#242424">验证损失在后段回升</text>
+<text x="52" y="272" font-size="12" text-anchor="middle" font-weight="normal" fill="#242424">开始</text>
+<text x="169" y="272" font-size="12" text-anchor="middle" font-weight="normal" fill="#242424">训练一段时间</text>
+<text x="279" y="272" font-size="12" text-anchor="middle" font-weight="normal" fill="#242424">继续训练</text>
+<text x="160" y="292" font-size="12" text-anchor="middle" font-weight="normal" fill="#242424">教学示意，非实际训练记录</text>
+</g>
+</svg>

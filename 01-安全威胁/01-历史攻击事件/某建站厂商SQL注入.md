@@ -2,11 +2,49 @@
 slug: /website-builder-sqli
 title: 某建站厂商SQL注入影响数万企业
 description: 某建站厂商 SQL 注入案例：从子域名枚举到 SQL 注入再到共享管理员密码的全链路展示与多实例批量影响分析。
+icon: history-circle-icon
 ---
 
 **建站厂商是供应链风险的高风险目标。** 它们统一管理数万家企业网站，一个集中漏洞就能导致大规模的客户数据泄露和权限突破。攻击者攻破建站平台，等于同时攻破其所有客户，这种放大效应使建站厂商成为投入产出比极高的攻击目标。
 
 ## 1 信息收集
+
+共享管理员凭据扩大到多个托管实例，客户账号又通向各自站点；两种身份路径都来自实例数据库的泄露，影响范围由集中托管和凭据设计共同决定。图可横向滚动。
+
+<div class="incident-diagram" role="region" tabindex="0" aria-label="建站平台注入与跨客户权限扩散，可横向滚动">
+
+```mermaid
+---
+config:
+  flowchart:
+    useMaxWidth: false
+    nodeSpacing: 28
+    rankSpacing: 40
+    padding: 12
+---
+flowchart TB
+accTitle: 建站平台注入与跨客户权限扩散
+accDescr: 共享管理员凭据扩大到多个托管实例，客户账号又通向各自站点；两种身份路径都来自实例数据库的泄露，影响范围由集中托管和凭据设计共同决定。
+  attacker([测试者]) -->|枚举 testwebN 子域| endpoints[多个托管实例的查询接口]
+  subgraph hosting[建站厂商托管平台]
+    query[可注入的页面参数]:::weakness
+    db[(各实例 maindb<br/>账号、明文密码与配置)]:::weakness
+    shared[相同的内置管理员凭据]:::weakness
+    customer[各客户的账号凭据]
+    query -->|SQL 注入读取| db
+    db --> shared
+    db --> customer
+  end
+  endpoints --> query
+  shared -->|登录多个子域| admin[多个实例的管理后台]
+  customer -->|以客户身份登录| sites[客户网站后台]
+  admin -->|集中管理客户网站| sites
+  sites --> impact([网站权限、数据库<br/>与源代码暴露]):::impact
+  classDef weakness fill:#fff1f2,stroke:#e11d48,color:#881337
+  classDef impact fill:#fef3c7,stroke:#d97706,color:#78350f
+```
+
+</div>
 
 **信息收集阶段可以直接揭示目标的整体架构。** 通过搜索引擎枚举子域名，发现该厂商使用了大量 `testwebN.***world.com` 格式的子域作为客户网站的临时访问入口，每个子域下托管了数千个客户网站。这种多实例统一托管的结构，意味着任何一个子域上的安全漏洞都具有横向传播到所有实例的潜力。
 

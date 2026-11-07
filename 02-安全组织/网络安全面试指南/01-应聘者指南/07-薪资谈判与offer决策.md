@@ -2,6 +2,7 @@
 slug: /sig/offer
 title: 薪资谈判与offer决策
 description: 网络安全岗位的薪资谈判与 offer 决策：先让对方出价、薪资包不只是月薪、多个 offer 决策框架与优雅拒绝。
+icon: currency-dollar-icon
 ---
 
 拿到 offer 前最后一道关卡，往往也是最容易留下遗憾的环节。很多人在技术面试表现出色，但在薪资谈判上过于保守，或者收到多个 offer 时不知道如何决策。

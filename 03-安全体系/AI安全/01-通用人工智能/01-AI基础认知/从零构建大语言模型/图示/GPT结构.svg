@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="480" viewBox="0 0 320 480" role="img" aria-labelledby="title desc">
+<title id="title">GPT 结构与残差连接</title>
+<desc id="desc">文字通过 token 与位置向量、多个 Transformer 块、最终层归一化和词表输出层。每个块中，注意力和前馈网络外各有一次残差连接。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#555"/></marker></defs>
+<rect width="320" height="480" rx="12" fill="#fff"/>
+<g font-family="system-ui, -apple-system, sans-serif">
+<rect x="18" y="10" width="284" height="34" rx="7" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="160.0" y="32" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">token ID → token 向量 + 位置向量</text>
+<path d="M160 46 V67" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="14" y="76" width="292" height="284" rx="8" fill="none" stroke="#999" stroke-dasharray="5 4"/>
+<text x="160" y="98" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">Transformer 块 × 层数</text>
+<text x="138" y="122" font-size="12" text-anchor="middle" font-weight="normal" fill="#242424">输入表示</text>
+<rect x="38" y="136" width="198" height="28" rx="6" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="137" y="155" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">LayerNorm</text>
+<rect x="38" y="176" width="198" height="28" rx="6" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="137" y="195" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">多头因果注意力</text>
+<rect x="38" y="248" width="198" height="28" rx="6" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="137" y="267" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">LayerNorm</text>
+<rect x="38" y="288" width="198" height="28" rx="6" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="137" y="307" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">前馈网络</text>
+<path d="M138 125 V134" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M138 165 V174" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M138 205 V210" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M138 237 V246" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M138 277 V286" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M138 317 V324" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M138 128 H274 V224 H152" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle cx="138" cy="224" r="13" fill="#fff" stroke="#555"/>
+<text x="138" y="229" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">+</text>
+<text x="290" y="176.0" font-size="12" text-anchor="middle" transform="rotate(90 290 176.0)">加回原输入</text>
+<path d="M138 241 H274 V338 H152" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle cx="138" cy="338" r="13" fill="#fff" stroke="#555"/>
+<text x="138" y="343" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">+</text>
+<text x="290" y="289.5" font-size="12" text-anchor="middle" transform="rotate(90 290 289.5)">加回中间表示</text>
+<path d="M160 362 V379" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="18" y="388" width="284" height="34" rx="7" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="160.0" y="410" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">最终 LayerNorm → 词表分数</text>
+<path d="M160 424 V437" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="18" y="446" width="284" height="34" rx="7" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="160.0" y="468" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">生成：取最后位置分数，选择并追加</text>
+</g>
+</svg>

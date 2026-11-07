@@ -1,0 +1,18 @@
+---
+slug: /ai-usage-data
+icon: gauge-icon
+hide_table_of_contents: true
+sidebar_badge:
+  text: 数据
+  color: info
+description: 汇总 MiniMax、OpenAI 和 Anthropic 的本地 token 用量快照；各平台观察窗不同，累计值只代表已同步记录。
+last_reviewed: '2026-07-10'
+---
+
+import LLMUsageDashboard from '@site/src/components/LLMUsageDashboard';
+
+# AI 使用数据
+
+数据口径：面板汇总当前已接入的 MiniMax、OpenAI 和 Anthropic 用量快照。各平台的观察起点与数据完整度不同，累计值只覆盖已经同步的日期；`0` 也可能表示暂无可用记录，不能据此比较平台能力或推断账号全量。
+
+<LLMUsageDashboard />

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="429" viewBox="0 0 320 429" role="img" aria-labelledby="title desc">
+<title id="title">指令微调的损失参与范围</title>
+<desc id="desc">每格是一段 token。指令、补充材料、回答标记与回答、第一个结束标记参与损失；后续额外填充的目标为负 100，不参与损失。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#555"/></marker></defs>
+<rect width="320" height="429" rx="12" fill="#fff"/>
+<g font-family="system-ui, -apple-system, sans-serif">
+<text x="160" y="29" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">一条样本中的目标 token</text>
+<rect x="18" y="46" width="284" height="52" rx="7" fill="#e5e5df" stroke="#888"/>
+<text x="33" y="78" font-size="14" text-anchor="start" font-weight="normal" fill="#242424">指令</text>
+<text x="285" y="78" font-size="13" text-anchor="end" font-weight="normal" fill="#242424">● 计入</text>
+<rect x="18" y="111" width="284" height="52" rx="7" fill="#e5e5df" stroke="#888"/>
+<text x="33" y="143" font-size="14" text-anchor="start" font-weight="normal" fill="#242424">可选材料</text>
+<text x="285" y="143" font-size="13" text-anchor="end" font-weight="normal" fill="#242424">● 计入</text>
+<rect x="18" y="176" width="284" height="52" rx="7" fill="#e5e5df" stroke="#888"/>
+<text x="33" y="208" font-size="14" text-anchor="start" font-weight="normal" fill="#242424">回答标记与回答</text>
+<text x="285" y="208" font-size="13" text-anchor="end" font-weight="normal" fill="#242424">● 计入</text>
+<rect x="18" y="241" width="284" height="52" rx="7" fill="#e5e5df" stroke="#888"/>
+<text x="33" y="273" font-size="14" text-anchor="start" font-weight="normal" fill="#242424">第一个结束标记</text>
+<text x="285" y="273" font-size="13" text-anchor="end" font-weight="normal" fill="#242424">● 计入</text>
+<rect x="18" y="306" width="284" height="52" rx="7" fill="#fff" stroke="#888" stroke-dasharray="4 3"/>
+<text x="33" y="338" font-size="14" text-anchor="start" font-weight="normal" fill="#242424">额外填充</text>
+<text x="285" y="338" font-size="13" text-anchor="end" font-weight="normal" fill="#242424">× 忽略</text>
+<text x="160" y="393" font-size="12" text-anchor="middle" font-weight="normal" fill="#242424">每格是一段 token，不是单个 token</text>
+<text x="160" y="415" font-size="12" text-anchor="middle" font-weight="normal" fill="#242424">结束与填充均用 50256，按位置区分</text>
+</g>
+</svg>

@@ -2,11 +2,59 @@
 slug: /github-leak-getshell
 title: 某云平台GitHub信息泄漏导致 GET SHELL
 description: UCloud 案例完整复盘：GitHub 凭据泄露 → SQL 注入 → 公私钥 → 云主机管理权限的攻击链与修复方案。
+icon: history-circle-icon
 ---
 
 **GitHub 泄露往往是攻击链的起点，一个配置文件的暴露可以升级为完整系统接管。** 代码仓库中直接存储的明文凭证、数据库密码、API 密钥，每一项单独看都是局部风险，但攻击者可以将它们串联成一条完整的攻击链：从邮件账号到数据库，从数据库到 API，从 API 到数千台云主机的管理权限。本文记录的 UCloud 案例完整呈现了这条路径。
 
 ## 1 漏洞入口
+
+同一份泄露源码产生三条独立路径：邮件身份、SQL 注入和云 API 密钥；云资源控制不依赖先完成 SQL 注入。虚线表示进一步的理论影响，测试未执行。图可横向滚动。
+
+<div class="incident-diagram" role="region" tabindex="0" aria-label="源码泄露通向数据访问与云资源管理的不同路径，可横向滚动">
+
+```mermaid
+---
+config:
+  flowchart:
+    useMaxWidth: false
+    nodeSpacing: 28
+    rankSpacing: 40
+    padding: 12
+---
+flowchart TB
+accTitle: 源码泄露通向数据访问与云资源管理的不同路径
+accDescr: 同一份泄露源码产生三条独立路径：邮件身份、SQL 注入和云 API 密钥；云资源控制不依赖先完成 SQL 注入。虚线表示进一步的理论影响，测试未执行。
+  leak[GSIL 发现公开泄露的源码]:::weakness
+  subgraph source[泄露内容与代码审计]
+    mailkey[邮件账号凭据]
+    sql[未认证接口中的 SQL 注入]:::weakness
+    apikey[云 API 公私钥<br/>包括注释中的密钥]:::weakness
+  end
+  leak --> mailkey
+  leak -->|Cobra 扫描| sql
+  leak -->|Cobra 扫描| apikey
+  mailkey -->|验证账号可用| mail[可使用的平台邮件身份]
+  sql -->|直接查询| db[(业务数据库内容)]:::impact
+  subgraph cloud[外网可调用的云管理 API]
+    api[携带公私钥调用 API]
+    resources[跨地区云资源管理权限]
+    vnc[获取 VNC 密码]
+    vm[创建云主机]
+    sms[发送短信]
+    api --> resources
+    resources --> vnc
+    resources --> vm
+    resources --> sms
+  end
+  apikey -->|验证外网调用| api
+  resources -. 权限可进一步用于，未执行 .-> danger[改密登录服务器、关机<br/>及更多关联资源操作]:::unverified
+  classDef weakness fill:#fff1f2,stroke:#e11d48,color:#881337
+  classDef impact fill:#fef3c7,stroke:#d97706,color:#78350f
+  classDef unverified fill:#f8fafc,stroke:#64748b,color:#334155,stroke-dasharray:5 4
+```
+
+</div>
 
 **自动化监控工具可以在漏洞被恶意利用前发现泄露，这是防御时间窗口的关键。** [GSIL](https://github.com/FeeiCN/GSIL) 监测到一处敏感信息泄露，涉及 UCloud 的设计运营系统、通用计算平台运营系统、UGC 平台运营管理系统等多个系统的代码仓库。
 

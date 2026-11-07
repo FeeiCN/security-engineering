@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="358" viewBox="0 0 320 358" role="img" aria-labelledby="title desc">
+<title id="title">因果注意力可见位置</title>
+<desc id="desc">行是正在处理的位置，列是参考位置。每个位置可以参考自己和前文，不能参考后文。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#555"/></marker></defs>
+<rect width="320" height="358" rx="12" fill="#fff"/>
+<g font-family="system-ui, -apple-system, sans-serif">
+<text x="160" y="30" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">行是当前位置，列是参考位置</text>
+<text x="94.0" y="78" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">小明</text>
+<text x="33" y="134" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">小明</text>
+<rect x="66" y="95" width="56" height="56" fill="#deded7" stroke="#aaa"/>
+<text x="94" y="130" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">●</text>
+<rect x="122" y="95" width="56" height="56" fill="#fff" stroke="#aaa"/>
+<text x="150" y="130" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">×</text>
+<rect x="178" y="95" width="56" height="56" fill="#fff" stroke="#aaa"/>
+<text x="206" y="130" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">×</text>
+<rect x="234" y="95" width="56" height="56" fill="#fff" stroke="#aaa"/>
+<text x="262" y="130" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">×</text>
+<text x="150.0" y="78" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">拿起</text>
+<text x="33" y="190" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">拿起</text>
+<rect x="66" y="151" width="56" height="56" fill="#deded7" stroke="#aaa"/>
+<text x="94" y="186" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">●</text>
+<rect x="122" y="151" width="56" height="56" fill="#deded7" stroke="#aaa"/>
+<text x="150" y="186" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">●</text>
+<rect x="178" y="151" width="56" height="56" fill="#fff" stroke="#aaa"/>
+<text x="206" y="186" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">×</text>
+<rect x="234" y="151" width="56" height="56" fill="#fff" stroke="#aaa"/>
+<text x="262" y="186" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">×</text>
+<text x="206.0" y="78" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">杯子</text>
+<text x="33" y="246" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">杯子</text>
+<rect x="66" y="207" width="56" height="56" fill="#deded7" stroke="#aaa"/>
+<text x="94" y="242" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">●</text>
+<rect x="122" y="207" width="56" height="56" fill="#deded7" stroke="#aaa"/>
+<text x="150" y="242" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">●</text>
+<rect x="178" y="207" width="56" height="56" fill="#deded7" stroke="#aaa"/>
+<text x="206" y="242" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">●</text>
+<rect x="234" y="207" width="56" height="56" fill="#fff" stroke="#aaa"/>
+<text x="262" y="242" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">×</text>
+<text x="262.0" y="78" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">它</text>
+<text x="33" y="302" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">它</text>
+<rect x="66" y="263" width="56" height="56" fill="#deded7" stroke="#aaa"/>
+<text x="94" y="298" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">●</text>
+<rect x="122" y="263" width="56" height="56" fill="#deded7" stroke="#aaa"/>
+<text x="150" y="298" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">●</text>
+<rect x="178" y="263" width="56" height="56" fill="#deded7" stroke="#aaa"/>
+<text x="206" y="298" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">●</text>
+<rect x="234" y="263" width="56" height="56" fill="#deded7" stroke="#aaa"/>
+<text x="262" y="298" font-size="18" text-anchor="middle" font-weight="normal" fill="#242424">●</text>
+<text x="160" y="344" font-size="12" text-anchor="middle" font-weight="normal" fill="#242424">● 可见（含自己）　× 遮住未来</text>
+</g>
+</svg>

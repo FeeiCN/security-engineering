@@ -1,0 +1,10 @@
+{
+  "label": "从零构建大语言模型",
+  "position": 6,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "index"
+  }
+}

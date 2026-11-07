@@ -14,6 +14,24 @@ description: CSRF 攻击的 200+ 条具体历史样本：覆盖从基础 GET 副
 
 ## 利用链路
 
+```mermaid
+---
+config:
+  sequence:
+    actorMargin: 10
+    width: 80
+    wrap: true
+---
+sequenceDiagram
+  participant P as 攻击者页面
+  actor B as 用户浏览器
+  participant T as 目标站点
+  B->>P: 访问页面
+  P-->>B: 返回表单或资源
+  B->>T: 触发携带目标站点 Cookie 的请求
+  T-->>B: 缺少校验时执行操作
+```
+
 ### GET 请求副作用（最简单）
 
 状态变更操作使用 GET 请求，攻击者将 URL 嵌入 `<img>` 标签，受害者加载包含该图片的任何页面时自动触发：

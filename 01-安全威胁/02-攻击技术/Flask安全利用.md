@@ -40,7 +40,10 @@ feei@Feeis-Work-Macbook Downloads % flask-unsign --unsign --cookie ".eJyrVirKz0l
 
 以下工具函数实现 Flask Session Cookie 的解码与重新编码：
 
-```python
+<details>
+<summary>查看完整 Session 编解码工具函数</summary>
+
+```python title="Session Cookie 编解码工具函数"
 #!/usr/bin/env python3
 """
     Flask Session Cookie Decoder/Encoder
@@ -111,6 +114,8 @@ if __name__ == "__main__":
     secret_key = 'test_secret_key_feei_cn'
     print(encode(secret_key, data))
 ```
+
+</details>
 
 <!-- truncate -->
 
@@ -259,7 +264,7 @@ SELECT * FROM users WHERE username = '' OR '1'='1'; --' AND password = '';
 
 改用参数化查询，将用户输入作为独立参数传递，数据库驱动会自动处理转义：
 
-```python
+```python title="使用参数化查询的修复示例" {12,17}
 from flask import Flask, request, render_template
 import sqlite3
 

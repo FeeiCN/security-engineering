@@ -1,7 +1,7 @@
 ---
 slug: /sql-injection
 title: SQL 注入
-icon: code-icon
+icon: mysql-icon
 sidebar_position: 1
 description: SQL 注入最详尽的历史样本库（300+ 条）：覆盖 MySQL/MSSQL/Oracle/PostgreSQL/SQLite/DB2 各种数据库、各种应用场景的具体绕过手法。
 ---

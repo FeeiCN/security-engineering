@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="464" viewBox="0 0 320 464" role="img" aria-labelledby="title desc">
+<title id="title">词表输出层与分类输出层对照</title>
+<desc id="desc">续写模型在每个位置输出词表的 50257 个分数；短信分类模型改为两个类别分数，并读取最后位置进行分类。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#555"/></marker></defs>
+<rect width="320" height="464" rx="12" fill="#fff"/>
+<g font-family="system-ui, -apple-system, sans-serif">
+<text x="160" y="27" font-size="15" text-anchor="middle" font-weight="600" fill="#242424">续写 GPT</text>
+<rect x="18" y="42" width="284" height="34" rx="7" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="160.0" y="64" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">短信 → GPT 文本表示</text>
+<path d="M160 78 V94" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="18" y="104" width="284" height="54" rx="7" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="160.0" y="126" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">词表输出层</text>
+<text x="160.0" y="147" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">每个位置：50257 个 token 分数</text>
+<path d="M160 160 V176" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="18" y="186" width="284" height="34" rx="7" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="160.0" y="208" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">选择下一 token，接回输入</text>
+<path d="M20 236 H300" stroke="#aaa" stroke-dasharray="4 4"/>
+<text x="160" y="264" font-size="15" text-anchor="middle" font-weight="600" fill="#242424">短信分类 GPT</text>
+<rect x="18" y="279" width="284" height="34" rx="7" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="160.0" y="301" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">短信 → GPT 文本表示</text>
+<path d="M160 315 V331" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="18" y="341" width="284" height="54" rx="7" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="160.0" y="363" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">新的二分类输出层</text>
+<text x="160.0" y="384" font-size="13" text-anchor="middle" font-weight="normal" fill="#242424">每个位置：2 个类别分数</text>
+<path d="M160 397 V413" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="18" y="423" width="284" height="34" rx="7" fill="#f6f6f3" stroke="#b8b8b0"/>
+<text x="160.0" y="445" font-size="14" text-anchor="middle" font-weight="600" fill="#242424">取最后位置 → 正常 / 垃圾</text>
+</g>
+</svg>
