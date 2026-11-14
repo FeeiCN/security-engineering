@@ -1,79 +1,95 @@
 ---
 slug: /solarwinds-sunburst-incident
-title: 2020-SolarWinds：带有效签名的更新怎样打开下游身份边界
+title: 2020年SolarWinds更新被植入后门致下游客户遭入侵
 sidebar_position: -2020
 icon: history-circle-icon
 description: 沿构建注入、SUNBURST 激活、选择性后续入侵和身份持久化还原 SolarWinds 事件，解释更新可信、运行权限和联合身份需要怎样独立验证。
 ---
 
-SolarWinds Orion 是用于监控基础设施的软件。2020 年曝光的供应链入侵把 SUNBURST 后门放进正常发布且具有有效签名的组件，使部分客户通过自己的更新流程执行恶意代码。信任更新来源并不能证明更新内容安全，监控服务的身份又可能扩大后续访问范围。SolarWinds 在 [2020 年 12 月 14 日 8-K](https://www.sec.gov/Archives/edgar/data/1739942/000162828020017451/swi-20201214.htm)中估计，可能安装含该问题版本的客户少于 18,000；这是当时的安装覆盖估计，不是已确认遭人工深入入侵的数量。
+2020 年 12 月披露的 SolarWinds 入侵，通过 Orion 软件的正常签名更新向客户分发 SUNBURST 后门。攻击者先在供应商构建时替换编译输入，客户安装更新后，后门以监控服务环境中的权限运行并回连，部分目标再遭人工深入入侵及数据窃取。SolarWinds 当时估计可能安装问题版本的客户少于 18,000；后续深入入侵只发生在其中部分目标。事件公开后，CISA 要求美国联邦民事机构断开受影响设备，调查继续延伸到下游凭据与身份系统。Mandiant 后将这组活动归入 APT29。[供应商披露](https://www.sec.gov/Archives/edgar/data/1739942/000162828020017451/swi-20201214.htm)和 [Mandiant 调查](https://cloud.google.com/blog/topics/threat-intelligence/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor)记录了影响与归因。
 
-本文依据 [Mandiant 的 SUNBURST 调查](https://cloud.google.com/blog/topics/threat-intelligence/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor)、[SolarWinds 后续披露](https://www.solarwinds.com/blog/new-findings-from-our-investigation-of-sunburst)及 [CISA AA20-352A](https://content.govdelivery.com/accounts/USDHSCISA/bulletins/2b1b32d)。CISA 描述的是多起相关调查中的活动，不能将每种持久化手法都套到所有安装过 Orion 的客户。
+## 攻击经过
 
-## 攻击者依次借用了发布者和客户的信任
+### 在编译器读取前替换源码，构建后再还原
 
-第一段发生在供应商构建环境。SolarWinds 后续调查称，攻击者使用专门的构建注入程序，将恶意代码插入 Orion 制品。攻击者利用的是获准源码、实际编译输入与最终发布之间的信任连接。
+SolarWinds 后续调查把已知可疑活动追溯至 2019 年 9 月，描述了 10 月的构建插入测试、2020 年 2 月 20 日起的恶意注入，以及 6 月移除相应构建恶意代码的经过。公司直到 12 月才获知攻击。[供应商调查时间线](https://www.solarwinds.com/blog/new-findings-from-our-investigation-of-sunburst)给出了这些阶段。
 
-第二段由客户正常安装更新完成。后门位于 `SolarWinds.Orion.Core.BusinessLayer.dll`，在服务运行环境中加载，休眠一段时间并检查分析工具，再通过伪装成合法软件活动的通信联络外部基础设施。Mandiant 观察到最长约两周的初始休眠。延迟与流量伪装减少异常与刚安装更新之间的直观联系。
+[CrowdStrike 对 SUNSPOT 的分析](https://www.crowdstrike.com/en-us/blog/sunspot-malware-technical-analysis/)进一步解释了构建注入：样本监视 `MsBuild.exe`，识别 Orion 工程，在编译器读取前把 `InventoryManager.cs` 换成包含 SUNBURST 的版本，构建完成后恢复原源码。报告中的测试日志用于演示这一机制。
 
-第三段是选择目标后开展人工操作。初始回连、接收后续载荷与进一步窃取数据是不同状态；一个 DNS 请求不能证明环境已经被完整人工渗透。攻击者可能利用服务可接触的凭证及更高权限继续扩展，但具体路径随受害环境变化。分析每家环境时需要核对 Orion 实际服务身份、保存的凭证和可达接口，不能仅凭产品名称推定拥有域管理员权限。
+攻击者改变的是构建过程实际消费的输入。源码库审查和事后文件检查都可能看到干净代码，而编译出来的 DLL 已含后门。后续正常签名流程又为受污染制品加上可信发布者的签名。
 
-CISA 在相关入侵中还观察到联合身份风险：攻击者取得 SAML 签名能力后，可以生成被云服务接受的伪造身份断言，读取邮件等资源。SAML 是让服务依据身份提供方的签名信任用户身份的机制；一旦签名信任根被控制，重置某位用户密码不能单独终止这种能力。
+### 客户正常安装后，监控服务加载后门
 
-下图保留客户之间路径不同的边界。图可横向滚动。
+恶意代码位于 `SolarWinds.Orion.Core.BusinessLayer.dll`，由正常 Orion 服务进程加载。SUNBURST 初始可休眠最长约两周，检查分析工具，再通过 DNS 选择通信基础设施，使用 HTTP 与外部控制服务器交换命令和数据。
 
-<div class="incident-diagram" role="region" tabindex="0" aria-label="SolarWinds 构建注入、客户执行和身份扩展路径，可横向滚动">
+Mandiant 描述其通信伪装成 Orion Improvement Program（OIP）活动，侦察结果存入正常插件配置文件。可执行任务包括传输文件、运行文件和查询系统。延迟启动与正常协议外观，减少了异常行为与刚安装更新之间的直观联系。
+
+### 从服务运行身份扩展到部分目标的其他权限
+
+后门首先拥有 Orion 服务所在环境的执行能力。客户授予监控软件的身份、网络可达性及可接触凭据，决定攻击者能否继续管理其他服务器或接触身份系统。
+
+CISA 在相关入侵中还观察到 SAML 签名能力被滥用：身份提供方用签名断言向云服务证明用户身份，攻击者取得签名密钥或相应控制能力后，可生成被目标服务接受的断言，再访问邮件等资源。这是部分相关入侵的扩展路径；它将持久访问从一个 DLL 转移到了身份信任关系。
+
+### 公开调查促使断开设备，根除继续覆盖身份
+
+2020 年 12 月 13 日，CISA 发布紧急指令要求相关联邦机构断开受影响 Orion 产品。[AA20-352A](https://content.govdelivery.com/accounts/USDHSCISA/bulletins/2b1b32d)随后指出，并非所有安装后门的组织都遭到后续行动，已深入失陷的环境则需要复杂的根除。
+
+CISA 还提醒使用可信的带外通信，攻击者可能关注 IT 与响应人员邮箱。隔离 Orion 能切断它的继续执行和通信，已有账号、应用凭证或身份信任需要另外处置。
+
+下图区分发布、客户执行及部分目标的身份扩展；虚线表示本文建议，可横向滚动。
+
+<div class="incident-diagram" role="region" tabindex="0" aria-label="SolarWinds 从构建替换到签名分发、下游入侵与身份根除，可横向滚动">
 
 ```mermaid
 flowchart TB
-  accTitle: 从可信更新到下游持久访问
-  accDescr: 攻击者在构建中注入后门，客户安装签名更新后产生回连，部分目标被进一步人工入侵。相关调查观察到凭证和联合身份持久化；这些并非全部客户的共同经过。响应需核对制品、主机及身份。
-  a["供应商构建过程被干预"] -->|发布签名制品| b["客户 Orion 服务加载后门"]
-  b -->|休眠后回连| c["部分目标接受后续操作"]
-  c -->|具体路径因环境而异| d["内部身份与数据访问扩大"]
-  d -->|部分相关入侵涉及 SAML| e["云身份与邮件访问"]
-  c -->|调查发现异常活动| r["处置建议：隔离、取证与重建<br/>核对身份持久化"]
-  r -. 切断后门运行 .-> b
-  r -. 撤销并重建身份信任 .-> e
-  class a,b,c,d main
-  class r response
+  accTitle: 构建污染怎样跨越发布与客户身份边界
+  accDescr: SUNSPOT 临时替换构建源码，签名更新分发 SUNBURST，客户服务加载并回连。部分相关入侵继续滥用内部凭据或 SAML 签名。公开调查后要求断开设备；虚线连接建议控制，部分路径并非全部客户的共同经过。
+  build["供应商构建被控制<br/>编译前替换源码，再恢复"]
+  release["含 SUNBURST 的签名组件"]
+  service["客户 Orion 服务加载<br/>休眠后 DNS 与 HTTP 回连"]
+  follow["部分目标遭人工深入入侵"]
+  saml["部分相关入侵<br/>滥用 SAML 签名与云身份"]
+  response["公开调查与 CISA 指令<br/>断开受影响设备并调查身份"]
+  supplyControl["建议：独立核验编译输入与制品<br/>保护签名和发布批准"]
+  identityControl["建议：限制监控服务身份<br/>隔离联合身份签名能力"]
+  build -->|正常构建与签名发布| release
+  release -->|客户正常安装更新| service
+  service -->|接收命令与后续载荷| follow
+  follow -->|按环境扩展凭据和身份能力| saml
+  service -->|供应链问题公开后组织处置| response
+  supplyControl -. 限制污染制品发布 .-> release
+  identityControl -. 限制后续身份扩展 .-> saml
+  class build,release,service,follow,saml main
+  class response response
+  class supplyControl,identityControl note
 ```
 
 </div>
 
-实线连接资料支持的能力变化，连线中的“部分”限制适用范围；虚线只表示响应对象。隔离 Orion 不会自动撤销已经建立的其他访问。
+## 关键突破、成因与防护
 
-## SUNSPOT 在编译期间替换源码，之后再还原
+### 源码审查与有效签名没有覆盖实际编译输入
 
-[CrowdStrike 2021 年 1 月 11 日的 SUNSPOT 分析](https://www.crowdstrike.com/en-us/blog/sunspot-malware-technical-analysis/)把供应方这一段落实到文件变化：样本监视 `MsBuild.exe`，从进程命令行识别 Orion 工程路径，在编译器读取前把 `InventoryManager.cs` 换成含 SUNBURST 的版本。构建进程退出后，它恢复原源码并清理备份。报告说明其展示的部分运行日志来自测试环境，不能当作供应商某次发布的现场日志。
+SUNSPOT 在编译期间短暂替换源码，避开了只看代码仓库或构建结束后文件的检查。供应方需要核对实际编译输入、构建参数与最终制品，并让发布验证与被验证的构建节点分属不同控制边界。
 
-因此，构建前审查源码、构建后再查看源码，都可能看到干净文件；编译器实际消费的却是中途替换的内容。有效签名随后封装的是已被污染的制品。决定判断的证据应是实际编译输入、文件替换轨迹和最终组件，而不只是源码库记录或签名有效。该机制解释供应方构建注入，不证明每个下游客户都经历后续 SAML 伪造。
+隔离和短生命周期构建环境、受保护的输入摘要、独立构建对照与签名门禁，可以减少构建管理权直接变成发布权的机会。来源证明也需独立保护；若同一攻击者能改输入、重写证明并放宽验证规则，新增签名仍由同一失陷权限背书。
 
-## 分别限制构建、监控和联合身份权限
+### 监控节点的正常权限可以成为横向管理权限
 
-供应方需要证明制品来自获准源码、可信构建及获准参数，并保护签名和发布批准。若攻击者能改构建、生成来源证明、修改验证规则并发布更新，增加一份签名文件仍无法形成独立约束。可由隔离构建、受保护的发布根及独立对照缩小这种共同失陷面。
+客户安装更新属于正常操作，后门执行后继承的是服务身份。及时隔离和升级受影响版本可以限制这条入口，但监控软件原有的管理员凭据与跨区访问，会决定入口失守后的损害。
 
-客户方需要限制监控软件的运行身份。网络监控可能需要读取状态，但不应因此默认拥有所有业务区的交互管理权或可复用管理员凭证。通过分区、专用身份和只读接口，可以在监控节点已经失陷的前提下限制继续部署和接触身份系统的能力。
+应按监控用途授予只读接口、专用身份和受限通信，不让监控运行账号默认拥有域管理或各业务区的交互登录权。真正的隔离由目标服务与网络策略执行，不能只依赖 Orion 自己声明“只读”。异常服务子进程、DNS/HTTP 通信和远程身份使用，也需在监控节点之外留存记录。
 
-联合身份签名根则应单独保护。不能让普通服务器管理权自然通向签名密钥、联合信任配置和云应用凭证。即使私钥不可导出，攻击者若能调用签名服务或替换受信根，仍可能伪造可接受身份，验收需覆盖这两种能力。恢复时还应检查新增服务主体、应用授权和长期凭证，避免只处理用户账号。
+### 身份签名根失陷后，改密码不足以清除访问
 
-身份调查可交叉核对云服务接受的断言、身份提供方认证记录、新增联合信任与应用凭证。缺少对应交互登录可以成为线索，但合法后台任务、日志保留与时间差也要排除，不能仅靠一个时间戳认定伪造。
+SAML 验证依赖受信签名，用户密码并不参与每一次断言验证。限制私钥导出需要配合签名服务调用权限与信任配置保护，否则攻击者仍可能请求合法签名或替换受信根。
 
-## 发现供应链问题后，仍需逐个清除下游身份
+恢复应覆盖签名信任、会话、服务主体和应用授权，并按目标服务的实现撤销既有访问。可信的管理环境与带外通信可以减少处置计划继续暴露。重新安装 Orion 不会删除此前建立的独立账号或云应用凭证，重建与轮换需要按依赖排序，以免在恢复监控和登录时重新引入原有权限。
 
-SolarWinds 后续披露把时间线追溯至 2019 年 9 月的已知可疑活动、10 月的构建插入测试，以及 2020 年 2 月 20 日起的恶意注入；公司称攻击者在 6 月移除相应构建恶意代码，12 月 12 日公司才获知攻击。攻击者停止注入不是防守方已发现或客户已清除的时间。12 月公开披露后，各客户的隔离、身份撤销与业务恢复仍需各自取证，不能共用供应商的结束日期。
+## 参考资料
 
-CISA 提醒，根除可能复杂且需要带外通信，因为攻击者会关注 IT 和响应人员的邮箱。响应讨论若仍在可疑身份域和邮箱中进行，可能继续暴露处置计划。可信通信、身份重建和主机重建需要共同安排。
-
-建议发布负责人在隔离流水线授予测试者构建节点管理权，只植入带标记的无害差异，再走正常签名与发布流程。独立发布门禁应因输入或制品对照不符而拒绝，保留构建输入摘要、制品摘要与拒绝记录；同一获准源码通过可信构建应能发布。若测试者还能改掉门禁规则，说明约束仍受同一权限控制。本文未对 SolarWinds 流水线实测。
-
-客户侧另给测试者监控服务已有身份，尝试调用测试业务区的管理接口及测试签名服务；应分别在服务授权处拒绝，正常只读监测应继续成功。对模拟失陷的身份根，身份团队在隔离租户轮换信任后，分别重放旧测试断言、旧应用凭证和原会话，以目标服务拒绝记录证明失效，并验证新授权的正常登录。具体会话撤销方式须依服务实现确定，不能假定换证书就覆盖全部访问。
-
-重建和轮换会影响监控、自动化与登录可用性，需要按依赖排序和保留回退条件。客户是否收到恶意更新、后门是否激活、是否形成额外访问及是否发生外传，应分别建立证据，不能用一个“受影响客户数”代替所有结论。升级到不含后门的版本可以改变该组件，但不清除先前建立的账号、应用授权或其他载荷；恢复准入应由客户侧证据支持。
-
-## 资料与核验入口
-
-- [Mandiant：SUNBURST 的加载、通信和后续入侵](https://cloud.google.com/blog/topics/threat-intelligence/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor)。
-- [SolarWinds：后续构建注入调查](https://www.solarwinds.com/blog/new-findings-from-our-investigation-of-sunburst)。
-- [CrowdStrike：SUNSPOT 构建注入分析](https://www.crowdstrike.com/en-us/blog/sunspot-malware-technical-analysis/)，核对 Build Hijacking Steps 与源码还原过程；测试日志与现场证据须分开。
-- [CISA AA20-352A：身份滥用和根除边界](https://content.govdelivery.com/accounts/USDHSCISA/bulletins/2b1b32d)。
+- [SolarWinds：2020 年 12 月 8-K 披露](https://www.sec.gov/Archives/edgar/data/1739942/000162828020017451/swi-20201214.htm)。
+- [Mandiant：SUNBURST 加载、通信与后续入侵](https://cloud.google.com/blog/topics/threat-intelligence/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor)。
+- [SolarWinds：构建注入与时间线调查](https://www.solarwinds.com/blog/new-findings-from-our-investigation-of-sunburst)。
+- [CrowdStrike：SUNSPOT 技术分析](https://www.crowdstrike.com/en-us/blog/sunspot-malware-technical-analysis/)，参见 Build Hijacking Steps。
+- [CISA AA20-352A：入侵、身份滥用及根除](https://content.govdelivery.com/accounts/USDHSCISA/bulletins/2b1b32d)。

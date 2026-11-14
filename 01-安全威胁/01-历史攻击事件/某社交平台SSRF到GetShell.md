@@ -1,140 +1,111 @@
 ---
 slug: /ssrf-getshell
-title: 某社交平台SSRF到GET SHELL
-description: 某社交平台 SSRF 到 GetShell 的完整技术链路：从支付回调 SSRF 到 file:// 协议读文件、gopher 协议打内网 Redis。
+title: 某社交平台SSRF被验证可读取配置并写入内网Redis
+description: 还原支付回调 SSRF 的本机文件读取与内网 Redis 写入两条验证路径，区分文件写入和实际命令执行，分析请求协议、服务认证与进程权限边界。
 icon: history-circle-icon
 ---
 
-**SSRF 漏洞能升级为 RCE 的关键在于内网的隐式信任关系。** 这个案例中，Redis 的匿名访问和可写的 cron 文件，是从 SSRF 到 GetShell 的两个关键跳板。外网的请求伪造漏洞之所以能最终完成服务器接管，是因为内网服务默认被当作可信环境，完全没有独立的认证防线。
+这份微博 SRC 活动记录中，研究者从支付回调参数取得服务器代发请求的能力，分别读取本机文件与代码配置、访问内网未认证 Redis，并验证了定时任务文件写入。由于测试时 `crond` 未运行，记录没有取得反弹 Shell。原文称使用本人账号实名测试，未继续连接业务数据库，问题已报告并修复，并记录严重漏洞奖励 5,000 元与 2,000 积分。
 
-<!-- truncate -->
+## 攻击经过
 
-## 1 找切入点
+### 控制回调 URL，让业务服务器代为访问
 
-同一 SSRF 连接两类原本不向外部开放的资源：本机文件和内网 Redis。文件读取与 Redis 写入是并行路径；cron 已被写入，但本次未运行，因此没有取得反弹 Shell。虚线表示条件满足时的理论结果。图可横向滚动。
+支付接口 `topay.php` 的 `payaction` 参数包含 URL。验证者把它替换为自控服务器地址，在访问日志中观察到目标服务器发来的请求，确认外部输入可以决定服务端访问目标。
 
-<div class="incident-diagram" role="region" tabindex="0" aria-label="支付 SSRF 如何跨入主机文件与内网 Redis，可横向滚动">
+![](/media/01-历史攻击事件/v_weibo_01-1024x479.webp)
+
+![](/media/01-历史攻击事件/v_weibo_02.webp)
+
+SSRF 的能力首先是借用服务器的连接位置和请求处理器。它能接触哪些地址、支持哪些协议，以及是否把响应返回外部，决定后续能否读取资料或操作内部服务。
+
+### 文件协议与路径线索扩大到配置读取
+
+当时的请求处理支持 `file://`，验证者读取本机定时任务文件和账号信息文件，再根据其中的脚本绝对路径寻找业务代码。记录还利用先前 rSync 匿名访问暴露的目录结构，辅助定位配置。
+
+![](/media/01-历史攻击事件/v_weibo_03-1024x564.webp)
+
+![](/media/01-历史攻击事件/v_weibo_04-1024x779.webp)
+
+![](/media/01-历史攻击事件/v_weibo_05-1024x845.webp)
+
+![img](/media/01-历史攻击事件/v_weibo_06.webp)
+
+在取得业务目录线索后，研究者验证代码配置和密钥文件可读。原截图如下：
+
+![](/media/01-历史攻击事件/v_weibo_07-1024x223.webp)
+
+![img](/media/01-历史攻击事件/v_weibo_08.webp)
+
+文件读取发生在发起请求的后端进程及其权限范围内。响应头还提示存在多后端部署，修复因而需要对应实际运行实例；一个入口的现象不能代替各实例权限与代码状态的核对。
+
+### Gopher 将服务器请求变成内网 Redis 操作
+
+另一条并行路径是内网服务访问。记录通过 `dict://` 探测响应和时间差，再确认数台内网 Redis 无需认证；随后用 `gopher://` 构造 Redis 协议数据，经 SSRF 发往服务端。
+
+匿名连接还能调用配置与持久化相关命令，便可改变 Redis 落盘目录和文件名。验证将定时任务内容写入 Redis 所在主机的 cron 目录，说明网络访问已进一步变成目标服务进程权限内的文件写入。该主机与最初提供文件读取的业务后端，是需要分别分析的边界。
+
+### 文件已写入，命令执行条件却没有满足
+
+原记录明确写到 `crond` 未运行，反弹 Shell 没有触发。若计划任务服务、文件格式和执行条件均满足，此类写入可能继续变成命令执行；本次证据止于文件写入。
+
+原验证声明未留存配置和密钥、未连接业务数据库、未保留后门，披露在修复后进行。后续处置需要清理测试写入、修复请求接口、限制 Redis 访问并轮换已暴露秘密。
+
+下图将文件读取与 Redis 写入分叉；虚线只连接本文建议，可横向滚动。
+
+<div class="incident-diagram" role="region" tabindex="0" aria-label="支付回调 SSRF 的文件读取与 Redis 写入验证边界，可横向滚动">
 
 ```mermaid
----
-config:
-  flowchart:
-    useMaxWidth: false
-    nodeSpacing: 28
-    rankSpacing: 40
-    padding: 12
----
 flowchart TB
-accTitle: 支付 SSRF 如何跨入主机文件与内网 Redis
-accDescr: 同一 SSRF 连接两类原本不向外部开放的资源：本机文件和内网 Redis。文件读取与 Redis 写入是并行路径；cron 已被写入，但本次未运行，因此没有取得反弹 Shell。虚线表示条件满足时的理论结果。
-  actor([测试者]) -->|控制支付回调 URL| callback[payaction 参数<br/>未限制目标与协议]:::weakness
-  subgraph business[业务服务器与负载均衡集群]
-    request[服务器代发请求]
-    files[本机文件、目录与配置]
-    secrets[代码配置与密钥暴露]:::impact
-    request -->|file 协议读取| files --> secrets
-  end
-  callback --> request
-  request -->|回连自控服务器| confirm[访问日志确认 SSRF]
-  subgraph internal[内网 Redis 所在主机]
-    redis[探测到的匿名 Redis]:::weakness
-    cron[Redis 持久化写入<br/>cron 文件]:::weakness
-    stopped[实际：crond 未运行<br/>未触发反弹 Shell]
-    redis -->|可修改落盘位置| cron --> stopped
-  end
-  request -->|内网探测后，以 gopher 操作| redis
-  cron -. 若定时任务正常执行 .-> shell[理论：命令执行<br/>与反弹 Shell]:::unverified
-  classDef weakness fill:#fff1f2,stroke:#e11d48,color:#881337
-  classDef impact fill:#fef3c7,stroke:#d97706,color:#78350f
-  classDef unverified fill:#f8fafc,stroke:#64748b,color:#334155,stroke-dasharray:5 4
+  accTitle: 服务器代发请求跨越了哪些边界
+  accDescr: 支付回调 URL 可控制服务端请求，file 协议读取本机文件和配置，gopher 经网络操作匿名 Redis，再借持久化写入 cron 文件。测试时 crond 未运行，没有反弹 Shell。虚线是建议。
+  request["外部控制 payaction URL"]
+  server["业务后端代发请求"]
+  file["file 协议读取本机文件"]
+  config["路径与代码配置、秘密暴露"]
+  redis["Gopher 发送 Redis 协议<br/>匿名服务接受操作"]
+  write["修改持久化配置并落盘<br/>定时任务文件被写入"]
+  limit["实际：crond 未运行<br/>未触发反弹 Shell"]
+  response["实名验证后报告<br/>记录称已修复"]
+  requestControl["建议：按业务限定协议与目标<br/>最终连接处执行出站策略"]
+  redisControl["建议：认证、命令授权与网络限制<br/>服务进程不能写系统执行目录"]
+  request -->|支付回调处理| server
+  server -->|允许本地文件协议| file
+  file -->|沿目录线索读取| config
+  server -->|探测后访问内网服务| redis
+  redis -->|以 Redis 进程权限写文件| write
+  write -->|记录中的执行条件缺失| limit
+  config -->|提交验证与暴露范围| response
+  limit -->|报告并安排清理| response
+  requestControl -. 限制非业务请求 .-> server
+  redisControl -. 切断服务操作到系统写入 .-> write
+  class server,file,config,redis,write main
+  class response response
+  class requestControl,redisControl note
 ```
 
 </div>
 
-**参数中携带 URL 是 SSRF 的经典信号。** 在支付回调接口 `http://zhifu.game.weibo.com/topay.php` 的 `payaction` 参数中发现了 URL 类型的值。后端在处理这类参数时，若会主动向该 URL 发起请求，就构成了服务端请求伪造的条件。通过将参数值替换为自控服务器地址并观察访问日志，即可验证漏洞是否存在。
+## 关键突破、成因与防护
 
-![](/media/01-历史攻击事件/v_weibo_01-1024x479.webp)
+### 请求目标与协议由外部参数决定
 
-**回放请求后服务器收到了来自目标的访问，SSRF 得以确认。**
+修复入口需按业务允许列表限制协议、目标和端口，同时核验解析后的地址、重定向和最终连接。支付回调本不需要读取本地文件或任意发送其他服务协议，移除这些能力可以直接压缩攻击路径。
 
-![](/media/01-历史攻击事件/v_weibo_02.webp)
+更深的限制由请求代理、容器或网络出口独立执行，业务进程不能自行解除内部地址访问策略。文件权限也要限制后端可读取的配置，使一次请求缺陷不直接暴露所有主机秘密。
 
-那就开始利用吧！
+### 内部位置被当作了 Redis 的充分信任依据
 
-## 2 第一滴血
+SSRF 使外部请求借用了业务服务器的网络位置，未认证服务因此暴露给间接访问者。认证、限定监听与客户端网络范围是直接措施；现代部署还可用 ACL 对身份、键空间和命令分别授权，参见 [Redis 官方安全说明](https://redis.io/docs/latest/operate/oss_and_stack/management/security/)。
 
-**`file://` 协议支持使 SSRF 直接变成任意文件读取。** 将 `payaction` 参数值替换为 `file:///etc/crontab`，服务端在发起请求时会直接读取本地文件并将内容返回。通过一个辅助重定向脚本，将 HTTP 请求跳转到任意协议地址，可以绕过部分协议限制，进一步扩展可读取的文件范围。
+普通业务身份不应获得修改持久化位置等管理命令，Redis 进程应使用专用低权限用户，并只能写入数据目录。即使服务认证或应用凭据再次失守，文件系统权限仍可限制它把数据库内容变成系统任务。客户端不能通过一项配置变更就同时扩大命令与文件写入范围。
 
-![](/media/01-历史攻击事件/v_weibo_03-1024x564.webp)
-![](/media/01-历史攻击事件/v_weibo_04-1024x779.webp)
+### 配置读取与目标写入需要分别清理
 
-**`/etc/crontab` 是获取服务器目录结构的快捷入口。** 定时任务文件中记录了大量脚本的完整路径，借助这些路径可以进一步读取业务代码、配置文件和密钥：
+读取到的秘密可以在原接口修复后继续被使用，已写入的定时任务文件也不会随 SSRF 修补消失。处置需要轮换相应身份、撤销已建立访问，并清理目标主机上的测试或异常写入。
 
-![](/media/01-历史攻击事件/v_weibo_05-1024x845.webp)
+本次未取得 Shell，仍需处理已经验证的文件与秘密暴露。检测可关联异常协议、非业务目标连接、Redis 管理命令及系统任务目录变化，记录在服务进程不能修改的位置。关闭必要内网访问会影响原业务，限定到明确客户端和命令，可以保留缓存功能并减少管理面暴露。
 
-读取`/etc/passwd`文件：
+## 参考资料
 
-![img](/media/01-历史攻击事件/v_weibo_06.webp)
-
-**负载均衡的存在将单点漏洞扩展到整个服务器集群。** 从 Response header 可以发现 `zhifu.game.weibo.com` 背后做了负载均衡，意味着这一任意文件读取漏洞影响的是后端所有实例，而非单台服务器。截至目前已达到集群级别的任意文件读取。
-
-## 3 扩大战果
-
-**读取代码配置**
-
-**已知的历史信息泄露可以作为新漏洞的跳板。** 结合此前发现的 rSync 匿名访问漏洞（该漏洞彼时已过去较长时间，但仍未彻底修复），可以获取 Web 目录的完整结构，再通过 SSRF 的文件读取能力逐一读取目标路径下的配置文件。
-
-`/data1/www/htdocs/game.weibo.com/`
-
-![](/media/01-历史攻击事件/v_weibo_07-1024x223.webp)
-
-**验证路径可读后，即可读取代码配置和密钥。**
-
-![img](/media/01-历史攻击事件/v_weibo_08.webp)
-
-至此已经可以读取到代码配置、密钥等敏感信息，并可以拿这些信息进一步利用了。
-
-## 4 再次扩大
-
-**任意写文件、爆破FTP、SMTP…**
-
-**`gopher` 协议是 SSRF 升级为写入能力的关键。** SSRF 除了支持 `file://` 读取本地文件，还支持 `gopher` 协议，可以直接构造 Redis 协议报文并通过 SSRF 发送，等同于直接操作内网 Redis 服务。
-
-**内网匿名 Redis 是从 SSRF 到 GetShell 的第一个跳板。** 利用 `dict://` 协议对内网 IP 段进行扫描，通过超时时间差判断端口是否开放，最终在内网找到数台可以无认证访问的 Redis 服务。Redis 在无认证保护的情况下，允许任何能够建立连接的客户端执行任意命令，包括修改其数据持久化的目录和文件名。
-
-- 10.75.6.89
-- 10.75.6.90
-- 10.75.6.91
-
-**可写的 cron 文件是第二个跳板。** 通过 SSRF 操控匿名 Redis，将一条反弹 shell 的命令写入 `/var/spool/cron/root`，并将 Redis 的持久化目录设置为 `/var/spool/cron/`、文件名设置为 `root`，执行 save 命令后 cron 文件即被覆盖。此次测试中 `crond` 服务未运行，反弹 shell 未成功触发。理论上只要 crond 运行，或者将内容写入 `/etc/profile.d` 等登录触发路径，即可在有人登录时完成 shell 反弹。
-
-**内网 Redis 不应以无认证方式运行。** Redis 设计之初假设运行在受信任的内网环境中，默认不启用认证。但当内网存在 SSRF 等间接访问路径时，这一假设就不再成立。对 Redis 启用 `requirepass` 认证并限制监听地址，是防止此类攻击链的基础防线。除 Redis 外，`gopher` 协议还可用于访问匿名 FTP、发送 SMTP 邮件、检测内网 ShellShock 等 Web 漏洞，内网服务的无认证暴露会在 SSRF 存在时产生连锁的攻击面。
-
-## 5 影响范围
-
-**这条攻击链将一个支付回调接口的参数漏洞升级为整个内网的访问权限。**
-
-- 整个负载均衡集群的任意文件读取（配置、脚本、代码、密钥等）
-- 内网匿名 Redis 所在服务器的任意文件写入（可 GetShell）
-- 内部微博接口服务任意调用
-- 访问任意微博内网服务
-
-## 6 渗透声明
-
-- 未留存任何此次渗透测试的数据（配置、密钥等）
-- 未连接任何此次渗透的DB
-- 未留存任何后门、木马
-- 所有敏感截图都会打码，避免CDN泄露
-- 本次渗透测试为实名测试，测试过程中使用的Cookie都为本人微博
-- 本次渗透过程在漏洞修复前不会公开与传播
-
-## 7 修复建议
-
-**修复链条的入口是 SSRF，但根本问题在于内网服务的隐式信任。** 修复 SSRF 是阻断这条攻击链的第一步，但即使 SSRF 被修复，内网匿名 Redis 的问题依然是独立的安全风险，需要分开处理：
-
-- 修复 SSRF，对 `payaction` 等 URL 参数进行严格的白名单或协议限制
-- 清理测试期间写入的文件（10.75 段的几台 Redis 服务器中的 `/var/spool/cron/root`）
-- 对所有内网 Redis 实例启用认证，并限制监听地址，禁止匿名访问
-- 对可能已泄露的密码、密钥进行轮换替换
-
-漏洞已报告给CNCERT/乌云/补天或厂商且已修复完成，感谢厂商的重视及现金奖励。（此次测试为微博 SRC 活动参与，严重漏洞奖励 ￥5,000 现金和 2,000 积分。）
+- [Redis：安全模型、认证、ACL 与服务进程权限](https://redis.io/docs/latest/operate/oss_and_stack/management/security/)。
