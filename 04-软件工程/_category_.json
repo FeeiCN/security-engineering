@@ -1,5 +1,6 @@
 {
   "label": "软件工程",
+  "link": {"type": "doc", "id": "软件工程"},
   "collapsible": true,
   "collapsed": true
 }

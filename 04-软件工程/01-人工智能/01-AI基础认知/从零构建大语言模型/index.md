@@ -2,7 +2,7 @@
 slug: /llms-from-scratch
 title: 从零构建大语言模型
 sidebar_position: 0
-pagination_next: 网络安全/人工智能安全/通用人工智能/AI基础认知/从零构建大语言模型/从零认识大语言模型
+pagination_next: 网络安全/网络空间安全/软件工程/人工智能/AI基础认知/从零构建大语言模型/从零认识大语言模型
 icon: book-icon
 description: 沿七章学习笔记，从文字编码、注意力与 GPT 结构读到预训练、短信分类微调和指令微调，理解数据、参数与生成的关系。
 ---
